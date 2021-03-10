@@ -1,0 +1,44 @@
+<?php
+/*
+ * Author: Vitor Hugo Nunes Marini
+ * Request API Consulta Calendário
+ * API - https://www.calendario.com.br/api_feriados_municipais_estaduais_nacionais.php
+ */
+
+include_once '../bd.php';
+include_once '../funcoes.php';
+
+#Retorno
+$retorno = false;
+$arrRet  = array();    
+$arrRet["request"] = array();
+
+#Dados para a URL
+$ano      = '2021'; // Informe o ano que irá ser feito a consulta;
+$ibge     = "00000000"; // Código completo do IBGE que deseja consultar;
+$token    = "xxxxxx"; // Insira seu Token enviado para seu e-mail conforme documentação;
+
+//Criando URL para conexão
+$url = 'http://api.calendario.com.br/?json=true&ano='.$ano.'&ibge='.$ibge.'&token='.$token;
+
+//Buscando os dados
+$data  = file_get_contents($url);
+
+#Convertendo os dados para JSON
+$dataJ  = json_decode($data, true);
+
+//Efetuando leitura do retorno;
+foreach ( $dataJ as $dados ){
+                
+    //Armazenando os valores de retorno
+    array_push($arrRet["request"], 
+           array(
+               "tipo"        => $dados['type'],
+               "codTipo"     => $dados['type_code'],
+               "descricao"   => $dados['description']
+           )
+    ); 
+         
+}
+
+//FIM
